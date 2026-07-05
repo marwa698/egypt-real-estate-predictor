@@ -1,0 +1,434 @@
+/* ===== CSS Variables (Light Theme Default) ===== */
+:root {
+  --bg-page: #f4f6f8;
+  --bg-card: #ffffff;
+  --bg-header: linear-gradient(135deg, #1e3a5f, #2c5282);
+  --bg-input: #ffffff;
+  --bg-bar-track: #e8eaed;
+  --bg-shap-track: #f0f0f0;
+  --bg-placeholder: #ffffff;
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #444444;
+  --text-muted: #888888;
+  --text-header: #ffffff;
+  --text-accent: #1e3a5f;
+  --text-price: #2c5282;
+
+  --border-color: #d8dce0;
+  --divider: #f0f0f0;
+
+  --btn-bg: #2c5282;
+  --btn-hover: #1e3a5f;
+  --btn-disabled: #9aa5b1;
+
+  --toggle-bg: rgba(255,255,255,0.15);
+  --toggle-hover: rgba(255,255,255,0.25);
+  --toggle-text: #ffffff;
+
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --badge-below-bg: #f0fdf4;
+  --badge-below-text: #15803d;
+  --badge-above-bg: #fff5f0;
+  --badge-above-text: #c2410c;
+}
+
+/* ===== Dark Theme ===== */
+[data-theme="dark"] {
+  --bg-page: #0f1117;
+  --bg-card: #1a1d2e;
+  --bg-header: linear-gradient(135deg, #0f1117, #1a1d2e);
+  --bg-input: #252839;
+  --bg-bar-track: #2a2d3e;
+  --bg-shap-track: #252839;
+  --bg-placeholder: #1a1d2e;
+
+  --text-primary: #e8eaf0;
+  --text-secondary: #b0b3c6;
+  --text-muted: #6b7280;
+  --text-header: #e8eaf0;
+  --text-accent: #93c5fd;
+  --text-price: #60a5fa;
+
+  --border-color: #2a2d3e;
+  --divider: #2a2d3e;
+
+  --btn-bg: #3b5998;
+  --btn-hover: #2c5282;
+  --btn-disabled: #374151;
+
+  --toggle-bg: rgba(255,255,255,0.08);
+  --toggle-hover: rgba(255,255,255,0.15);
+  --toggle-text: #e8eaf0;
+
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  --badge-below-bg: #052e16;
+  --badge-below-text: #4ade80;
+  --badge-above-bg: #1c0a00;
+  --badge-above-text: #fb923c;
+}
+
+/* ===== Reset ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===== App Layout ===== */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Header ===== */
+.app-header {
+  background: var(--bg-header);
+  color: var(--text-header);
+  padding: 2rem 2rem 1.75rem;
+  text-align: center;
+  position: relative;
+}
+
+.header-controls {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+[dir="ltr"] .header-controls {
+  left: auto;
+  right: 1rem;
+}
+
+.toggle-btn {
+  background: var(--toggle-bg);
+  color: var(--toggle-text);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 52px;
+}
+
+.toggle-btn:hover {
+  background: var(--toggle-hover);
+}
+
+.app-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-header p {
+  opacity: 0.88;
+  font-size: 0.95rem;
+}
+
+/* ===== Main Grid ===== */
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .app-main { grid-template-columns: 1fr; }
+}
+
+/* ===== Card Base ===== */
+.prediction-form,
+.price-result,
+.shap-chart,
+.placeholder {
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* ===== Form ===== */
+.prediction-form h2 {
+  margin-bottom: 1.25rem;
+  font-size: 1.2rem;
+  color: var(--text-accent);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row.three-cols {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.form-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.form-row select,
+.form-row input {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  transition: border-color 0.2s, background 0.3s;
+}
+
+.form-row select:focus,
+.form-row input:focus {
+  outline: none;
+  border-color: var(--btn-bg);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--btn-bg);
+}
+
+.prediction-form button[type="submit"] {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--btn-bg);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.prediction-form button[type="submit"]:hover:not(:disabled) {
+  background: var(--btn-hover);
+}
+
+.prediction-form button[type="submit"]:disabled {
+  background: var(--btn-disabled);
+  cursor: not-allowed;
+}
+
+/* ===== Results Column ===== */
+.results-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.placeholder {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem 1.5rem;
+  height: fit-content;
+}
+
+/* ===== Price Result ===== */
+.price-result h2 {
+  font-size: 1.2rem;
+  color: var(--text-accent);
+  margin-bottom: 1rem;
+}
+
+.main-price {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text-price);
+  margin-bottom: 0.5rem;
+}
+
+.main-price span {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.price-range {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.confidence-bar {
+  margin-bottom: 1.5rem;
+}
+
+.confidence-bar span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.bar-track {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-bar-track);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #38a169;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.market-comparison h3 {
+  font-size: 1rem;
+  color: var(--text-accent);
+  margin-bottom: 0.75rem;
+}
+
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--divider);
+  color: var(--text-secondary);
+}
+
+.comparison-row strong {
+  color: var(--text-primary);
+}
+
+.comparison-badge {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.comparison-badge.above {
+  background: var(--badge-above-bg);
+  color: var(--badge-above-text);
+}
+
+.comparison-badge.below {
+  background: var(--badge-below-bg);
+  color: var(--badge-below-text);
+}
+
+/* ===== SHAP Chart ===== */
+.shap-chart h2 {
+  font-size: 1.2rem;
+  color: var(--text-accent);
+  margin-bottom: 0.25rem;
+}
+
+.shap-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.shap-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 45px;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.shap-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.shap-bar-track {
+  height: 16px;
+  background: var(--bg-shap-track);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.shap-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.shap-bar-fill.positive { background: #38a169; }
+.shap-bar-fill.negative { background: #e53e3e; }
+
+.shap-pct {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.shap-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.positive { background: #38a169; }
+.dot.negative { background: #e53e3e; }
+
+/* ===== Footer ===== */
+.app-footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}

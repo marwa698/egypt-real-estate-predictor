@@ -1,0 +1,32 @@
+{
+  "model_type": "XGBoost Regressor",
+  "target": "log(price)",
+  "mae_egp": 4910977.698965071,
+  "rmse_egp": 9326936.30392036,
+  "r2_score": 0.7414757599917692,
+  "best_params": {
+    "n_estimators": 732,
+    "max_depth": 8,
+    "learning_rate": 0.02769833223552951,
+    "subsample": 0.8906810369271654,
+    "colsample_bytree": 0.993732369841219,
+    "min_child_weight": 6,
+    "gamma": 0.018559037288034874,
+    "reg_alpha": 0.6805578073201672,
+    "reg_lambda": 4.297944543656189
+  },
+  "n_training_samples": 15456,
+  "n_test_samples": 3865,
+  "features": [
+    "size_sqm",
+    "bedrooms",
+    "bathrooms",
+    "has_maid_room",
+    "type_encoded",
+    "payment_method_encoded",
+    "governorate_encoded",
+    "sub_area_encoded",
+    "area_price_per_sqm",
+    "sqm_per_bedroom"
+  ]
+}

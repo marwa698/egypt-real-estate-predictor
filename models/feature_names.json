@@ -1,0 +1,12 @@
+[
+  "size_sqm",
+  "bedrooms",
+  "bathrooms",
+  "has_maid_room",
+  "type_encoded",
+  "payment_method_encoded",
+  "governorate_encoded",
+  "sub_area_encoded",
+  "area_price_per_sqm",
+  "sqm_per_bedroom"
+]
