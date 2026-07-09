@@ -13,11 +13,11 @@ MODELS_DIR = Path(__file__).parent.parent / "models"
 
 class PricePredictor:
     def __init__(self):
-        # 1. حمّل الموديل
+        # 1. حمّل الموديل (ubj format - متوافق مع كل النسخ)
         self.model = xgb.Booster()
-        self.model.load_model(str(MODELS_DIR / "xgboost_model.json"))
+        self.model.load_model(str(MODELS_DIR / "model.ubj"))
 
-        # 2. حمّل الـ encoders (type, payment_method, governorate, sub_area)
+        # 2. حمّل الـ encoders
         with open(MODELS_DIR / "encoders.pkl", "rb") as f:
             self.encoders = pickle.load(f)
 
@@ -29,11 +29,11 @@ class PricePredictor:
         with open(MODELS_DIR / "global_median_pps.json", "r") as f:
             self.global_median_pps = json.load(f)["global_median_pps"]
 
-        # 5. ترتيب الفيتشرز بالظبط زي ما اتدرب عليه الموديل
+        # 5. ترتيب الفيتشرز
         with open(MODELS_DIR / "feature_names.json", "r") as f:
             self.feature_names = json.load(f)
 
-        # 6. قوائم القيم المعروفة (للتحقق وللـ dropdowns في الفرونت إند)
+        # 6. قوائم القيم المعروفة
         with open(MODELS_DIR / "known_areas.json", "r", encoding="utf-8") as f:
             self.known_areas = json.load(f)
 
@@ -44,20 +44,17 @@ class PricePredictor:
             self.known_types = json.load(f)
 
     def _safe_encode(self, encoder, value: str) -> int:
-        """يحول نص لرقم عن طريق الـ LabelEncoder، ولو القيمة مش معروفة يرجع قيمة افتراضية"""
         if value in encoder.classes_:
             return int(encoder.transform([value])[0])
         return 0
 
     def _build_features(self, request) -> tuple[pd.DataFrame, float]:
-        """يحول الـ request لصف واحد بنفس ترتيب الفيتشرز اللي اتدرب عليها الموديل"""
         type_encoded = self._safe_encode(self.encoders["type"], request.property_type)
         payment_encoded = self._safe_encode(self.encoders["payment_method"], request.payment_method)
         gov_encoded = self._safe_encode(self.encoders["governorate"], request.governorate)
         area_encoded = self._safe_encode(self.encoders["sub_area"], request.sub_area)
 
         area_pps = self.area_price_per_sqm.get(request.sub_area, self.global_median_pps)
-
         sqm_per_bedroom = request.size_sqm / (request.bedrooms + 1)
 
         row = {
@@ -81,7 +78,6 @@ class PricePredictor:
         log_price = self.model.predict(xgb.DMatrix(X))[0]
         price = float(np.expm1(log_price))
 
-        # نطاق سعري تقريبي بناءً على دقة الموديل (~18% هامش)
         margin = price * 0.18
         price_low = max(price - margin, 0)
         price_high = price + margin
@@ -90,27 +86,21 @@ class PricePredictor:
         comparison_pct = ((price_per_sqm_input - area_pps) / area_pps) * 100 if area_pps else 0
 
         return {
-    "predicted_price": float(round(price, 0)),
-    "price_range_low": float(round(price_low, 0)),
-    "price_range_high": float(round(price_high, 0)),
-    "confidence": 0.74,
-    "area_avg_price_per_sqm": float(round(area_pps, 0)),
-    "price_per_sqm_input": float(round(price_per_sqm_input, 0)),
-    "comparison_to_area_avg_pct": float(round(comparison_pct, 1)),
-}
+            "predicted_price": float(round(price, 0)),
+            "price_range_low": float(round(price_low, 0)),
+            "price_range_high": float(round(price_high, 0)),
+            "confidence": 0.74,
+            "area_avg_price_per_sqm": float(round(area_pps, 0)),
+            "price_per_sqm_input": float(round(price_per_sqm_input, 0)),
+            "comparison_to_area_avg_pct": float(round(comparison_pct, 1)),
+        }
 
     def explain(self, request) -> dict:
-        """
-        تفسير القرار باستخدام XGBoost المدمج لحساب SHAP values
-        (بدل مكتبة shap الخارجية، عشان تفادي مشاكل توافق الإصدارات
-        بين xgboost 3.x وحاسبة SHAP الخارجية)
-        """
         X, _ = self._build_features(request)
 
         dmatrix = xgb.DMatrix(X)
         shap_output = self.model.predict(dmatrix, pred_contribs=True)[0]
 
-        # آخر عنصر في المصفوفة هو الـ base_value (bias)، والباقي تأثير كل feature بالترتيب
         shap_values = shap_output[:-1]
         base_value = float(shap_output[-1])
         predicted_value = float(base_value + shap_values.sum())
@@ -136,5 +126,4 @@ class PricePredictor:
         }
 
 
-# نسخة واحدة بس من الموديل تتحمل عند تشغيل السيرفر (مش كل request)
 predictor = PricePredictor()
