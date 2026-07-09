@@ -14,8 +14,8 @@ MODELS_DIR = Path(__file__).parent.parent / "models"
 class PricePredictor:
     def __init__(self):
         # 1. حمّل الموديل
-        with open(MODELS_DIR / "xgboost_model.pkl", "rb") as f:
-            self.model = pickle.load(f)
+        self.model = xgb.Booster()
+        self.model.load_model(str(MODELS_DIR / "xgboost_model.json"))
 
         # 2. حمّل الـ encoders (type, payment_method, governorate, sub_area)
         with open(MODELS_DIR / "encoders.pkl", "rb") as f:
@@ -78,7 +78,7 @@ class PricePredictor:
     def predict(self, request) -> dict:
         X, area_pps = self._build_features(request)
 
-        log_price = self.model.predict(X)[0]
+        log_price = self.model.predict(xgb.DMatrix(X))[0]
         price = float(np.expm1(log_price))
 
         # نطاق سعري تقريبي بناءً على دقة الموديل (~18% هامش)
@@ -107,9 +107,8 @@ class PricePredictor:
         """
         X, _ = self._build_features(request)
 
-        booster = self.model.get_booster()
         dmatrix = xgb.DMatrix(X)
-        shap_output = booster.predict(dmatrix, pred_contribs=True)[0]
+        shap_output = self.model.predict(dmatrix, pred_contribs=True)[0]
 
         # آخر عنصر في المصفوفة هو الـ base_value (bias)، والباقي تأثير كل feature بالترتيب
         shap_values = shap_output[:-1]
